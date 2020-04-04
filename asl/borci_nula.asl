@@ -5,7 +5,7 @@
 @quads[atomic]
 +gsize(S,W,H) : true
   <- // calculates the area of each quadrant and remembers them
-     .print("init all scout");
+     .print("init");
      !inform_quad(S,borci_jedna1,role(scout));
      !inform_quad(S,borci_jedna2,role(scout));
      !inform_quad(S,borci_jedna5,role(scout));
@@ -21,7 +21,138 @@
 
 +!inform_quad(_,Miner,x)
   <- .print("Miner ",Miner," is assigned ", x).
+  
++!untell_role
+  <- .print("called untell");
+     .send(borci_jedna1,untell,role(miner));
+	 .send(borci_jedna2,untell,role(_));
+     .send(borci_jedna3,untell,role(_));
+     .send(borci_jedna4,untell,role(_));
+     .send(borci_jedna5,untell,role(_));
+     .send(borci_jedna6,untell,role(_)).
+	 
++!make_miner(Miner)
+  <- .send(Miner,untell,role(scout));
+  	 .send(Miner,tell,role(miner)).
 
++!make_scout(Miner)
+  <- .send(Miner,untell,role(miner));
+  	 .send(Miner,tell,role(scout)).
+//+gold(_,_) : .print("asdf").
+  
++gold(_,_)  : .count(gold(_,_), X) & X > 17
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_miner(borci_jedna6).
+
++gold(_,_) : .count(gold(_,_), X) & X > 14
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+
++gold(_,_) : .count(gold(_,_), X) & X > 11
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++gold(_,_) : .count(gold(_,_), X) & X > 8
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++gold(_,_): .count(gold(_,_), X) & X > 5
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++gold(_,_) : .count(gold(_,_), X) & X > 2
+  <- !make_miner(borci_jedna1);
+	 !make_scout(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++gold(_,_) : .count(gold(_,_), X) & X > -1
+  <- !make_scout(borci_jedna1);
+	 !make_scout(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+//------------------------------------------------------------------------------------
+	 
+-gold(_,_)  : .count(gold(_,_), X) & X > 17
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_miner(borci_jedna6).
+
+-gold(_,_) : .count(gold(_,_), X) & X > 14
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+
+-gold(_,_) : .count(gold(_,_), X) & X > 11
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+-gold(_,_) : .count(gold(_,_), X) & X > 8
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+-gold(_,_): .count(gold(_,_), X) & X > 5
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+-gold(_,_) : .count(gold(_,_), X) & X > 2
+  <- !make_miner(borci_jedna1);
+	 !make_scout(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+-gold(_,_) : .count(gold(_,_), X) & X > -1
+  <- !make_scout(borci_jedna1);
+	 !make_scout(borci_jedna2);
+	 !make_scout(borci_jedna3);
+	 !make_scout(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
 
 /*
 

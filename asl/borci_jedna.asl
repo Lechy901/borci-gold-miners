@@ -5,7 +5,7 @@
 { include("search_quadrant.asl") }      // idem
 { include("fetch_gold.asl") }           // plans for fetch gold goal
 { include("goto_depot.asl") }           // plans for go to depot goal
-{ include("allocation_protocol.asl") }  // plans for the gold allocation protocol
+{ include("borci_allocation_protocol.asl") }  // plans for the gold allocation protocol
 
 /* functions */
 
@@ -48,7 +48,8 @@ search_gold_strategy(near_unvisited). // initial strategy
 // find the closest gold among the known options
 @cgod2[atomic]
 +!choose_goal
- :  container_has_space &               // I have space for more gold
+ :  role(miner) & 
+    container_has_space &               // I have space for more gold
     .findall(gold(X,Y),gold(X,Y),LG) &  // LG is all known golds
     evaluate_golds(LG,LD) &             // evaluate golds in LD
     .print("All golds=",LG,", evaluation=",LD) &
@@ -164,17 +165,16 @@ worthwhile(gold(GX,GY)) :-
 // I perceived unknown gold, decide next gold
 @pcell0[atomic]          // atomic: so as not to handle another
                          // event until handle gold is carrying on
-		
-// I am a scout
-+cell(X,Y,gold)
-  :  role(scout)
++cell(X,Y,gold) : role(scout) & not gold(X,Y)
   <- +gold(X,Y);
      +announced(gold(X,Y));
      .print("Announcing ",gold(X,Y)," to others");
-     .broadcast(tell,gold(X,Y)).	
-						 
+     .broadcast(tell,gold(X,Y));
+	 .send(borci_nula,tell,gold(X,Y)).
+
 +cell(X,Y,gold)
-  :  container_has_space &
+  :  role(miner) & 
+     container_has_space &
      not gold(X,Y) // is is an unknown gold
   <- .print("Gold perceived: ",gold(X,Y));
      +gold(X,Y);
@@ -182,19 +182,22 @@ worthwhile(gold(GX,GY)) :-
 	 
 // I am not free and do not have space, just add gold belief and announce to others
 +cell(X,Y,gold)
-  :  not container_has_space & not gold(X,Y) & not committed(gold(X,Y),_,_)
+  :  role(miner) & 
+     not container_has_space & not gold(X,Y) & not committed(gold(X,Y),_,_)
   <- +gold(X,Y);
      +announced(gold(X,Y));
      .print("Announcing ",gold(X,Y)," to others");
-     .broadcast(tell,gold(X,Y)).
+     .broadcast(tell,gold(X,Y));
+	 .send(borci_nula,tell,gold(X,Y)).
 
 // If I see an empty cell where it was supposed to be gold, announce it to others
 +cell(X,Y,empty)
-  :  gold(X,Y) &
+  :  role(miner) & gold(X,Y) &
      not .desire(fetch_gold(gold(X,Y))) // in this case, I empty the cell!
   <- !remove(gold(X,Y));
      .print("The gold at ",X,",",Y," was picked by someone else! Announcing to others.");
-     .broadcast(tell,picked(gold(X,Y))).
+     .broadcast(tell,picked(gold(X,Y)));
+	 .send(borci_nula,untell,gold(X,Y)).
 
 
 /* end of a simulation */
@@ -217,7 +220,8 @@ worthwhile(gold(GX,GY)) :-
      .abolish(committed_to(gold(X,Y),_,_));
      .abolish(picked(gold(X,Y)));
      .abolish(announced(gold(X,Y)));
-     .abolish(allocated(gold(X,Y),_)).
+     .abolish(allocated(gold(X,Y),_));
+	 .send(borci_nula,untell,gold(X,Y)).
 
 @rl[atomic]
 +restart
