@@ -3,17 +3,17 @@
 /* quadrant allocation */
 
 @quads[atomic]
-+gsize(S,W,H) : true
++gsize(S,W,H) : depot(A,X,Y)
   <- // calculates the area of each quadrant and remembers them
      .print("init");
-     !inform_quad(S,borci_jedna1,role(scout));
-     !inform_quad(S,borci_jedna2,role(scout));
-     !inform_quad(S,borci_jedna5,role(scout));
-     !inform_quad(S,borci_jedna6,role(scout));
-     !inform_quad(S,borci_jedna3,role(scout));
-     !inform_quad(S,borci_jedna4,role(scout)).
+     !inform_quad(S,borci_jedna1,role(miner));
+     !inform_quad(S,borci_jedna2,role(miner));
+     !inform_quad(S,borci_jedna5,role(miner));
+     !inform_quad(S,borci_jedna6,role(miner));
+     !inform_quad(S,borci_jedna3,role(miner));
+     !inform_quad(S,borci_jedna4,role(miner)).
 
-
+//+finished[source(Ag)] 
 // only informs the quadrant if the depot is not in the quadrant
 +!inform_quad(S,Miner,Q)
   :  true
@@ -21,15 +21,6 @@
 
 +!inform_quad(_,Miner,x)
   <- .print("Miner ",Miner," is assigned ", x).
-  
-+!untell_role
-  <- .print("called untell");
-     .send(borci_jedna1,untell,role(miner));
-	 .send(borci_jedna2,untell,role(_));
-     .send(borci_jedna3,untell,role(_));
-     .send(borci_jedna4,untell,role(_));
-     .send(borci_jedna5,untell,role(_));
-     .send(borci_jedna6,untell,role(_)).
 	 
 +!make_miner(Miner)
   <- .send(Miner,untell,role(scout));
@@ -38,9 +29,24 @@
 +!make_scout(Miner)
   <- .send(Miner,untell,role(miner));
   	 .send(Miner,tell,role(scout)).
-//+gold(_,_) : .print("asdf").
-  
-+gold(_,_)  : .count(gold(_,_), X) & X > 17
+
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.8 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_miner(borci_jedna6).
+	 
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.7 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_miner(borci_jedna6).
+	 
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.6 * Y
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -48,7 +54,7 @@
 	 !make_miner(borci_jedna5);
 	 !make_miner(borci_jedna6).
 
-+gold(_,_) : .count(gold(_,_), X) & X > 14
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.5 * Y
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -56,7 +62,15 @@
 	 !make_miner(borci_jedna5);
 	 !make_scout(borci_jedna6).
 
-+gold(_,_) : .count(gold(_,_), X) & X > 11
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.4 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.3 * Y
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -64,7 +78,56 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
-+gold(_,_) : .count(gold(_,_), X) & X > 8
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.2 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.1 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++tick(X)[source(borci_jedna1)] : steps(_, Y) & X > 0.0 * Y
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
+/*
++!designate_miners : .count(gold(_,_), X) & X > 40
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_miner(borci_jedna6).
+
++!designate_miners : .count(gold(_,_), X) & X > 25
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_miner(borci_jedna5);
+	 !make_scout(borci_jedna6).
+
++!designate_miners : .count(gold(_,_), X) & X > 15
+  <- !make_miner(borci_jedna1);
+	 !make_miner(borci_jedna2);
+	 !make_miner(borci_jedna3);
+	 !make_miner(borci_jedna4);
+	 !make_scout(borci_jedna5);
+	 !make_scout(borci_jedna6).
+	 
++!designate_miners : .count(gold(_,_), X) & X > 10
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -72,7 +135,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
-+gold(_,_): .count(gold(_,_), X) & X > 5
++!designate_miners : .count(gold(_,_), X) & X > 6
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_scout(borci_jedna3);
@@ -80,7 +143,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
-+gold(_,_) : .count(gold(_,_), X) & X > 2
++!designate_miners : .count(gold(_,_), X) & X > 3
   <- !make_miner(borci_jedna1);
 	 !make_scout(borci_jedna2);
 	 !make_scout(borci_jedna3);
@@ -88,7 +151,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
-+gold(_,_) : .count(gold(_,_), X) & X > -1
++!designate_miners : .count(gold(_,_), X) & X > -1
   <- !make_scout(borci_jedna1);
 	 !make_scout(borci_jedna2);
 	 !make_scout(borci_jedna3);
@@ -98,7 +161,7 @@
 	 
 //------------------------------------------------------------------------------------
 	 
--gold(_,_)  : .count(gold(_,_), X) & X > 17
+-gold(_,_)  : .count(gold(_,_), X) & X > 40
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -106,7 +169,7 @@
 	 !make_miner(borci_jedna5);
 	 !make_miner(borci_jedna6).
 
--gold(_,_) : .count(gold(_,_), X) & X > 14
+-gold(_,_) : .count(gold(_,_), X) & X > 25
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -114,7 +177,7 @@
 	 !make_miner(borci_jedna5);
 	 !make_scout(borci_jedna6).
 
--gold(_,_) : .count(gold(_,_), X) & X > 11
+-gold(_,_) : .count(gold(_,_), X) & X > 15
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -122,7 +185,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
--gold(_,_) : .count(gold(_,_), X) & X > 8
+-gold(_,_) : .count(gold(_,_), X) & X > 10
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_miner(borci_jedna3);
@@ -130,7 +193,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
--gold(_,_): .count(gold(_,_), X) & X > 5
+-gold(_,_): .count(gold(_,_), X) & X > 6
   <- !make_miner(borci_jedna1);
 	 !make_miner(borci_jedna2);
 	 !make_scout(borci_jedna3);
@@ -138,7 +201,7 @@
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
 	 
--gold(_,_) : .count(gold(_,_), X) & X > 2
+-gold(_,_) : .count(gold(_,_), X) & X > 3
   <- !make_miner(borci_jedna1);
 	 !make_scout(borci_jedna2);
 	 !make_scout(borci_jedna3);
@@ -153,7 +216,7 @@
 	 !make_scout(borci_jedna4);
 	 !make_scout(borci_jedna5);
 	 !make_scout(borci_jedna6).
-
+*/
 /*
 
      +init_pos(S,X,Y)[source(A)]
@@ -195,10 +258,10 @@
 /* negotiation for found gold */
 
 +bid(Gold,D,Ag)
-  :  .count(bid(Gold,_,_),5)  // five bids were received
+  :  .count(bid(Gold,X,Y),3)  // five bids were received
   <- //.print("bid from ",Ag," for ",Gold," is ",D);
      !allocate_miner(Gold);
-     .abolish(bid(Gold,_,_)).
+     .abolish(bid(Gold,X,Y)).
 //+bid(Gold,D,Ag)
 //  <- .print("bid from ",Ag," for ",Gold," is ",D).
 
@@ -214,7 +277,6 @@
 
 // if some announce gold, cancel previous allocation
 +gold(X,Y)[source(Ag)]
-  <- .broadcast(untell, allocated(gold(X,Y),Ag));
+  <- .broadcast(untell, allocated(gold(X,Y),Ag)).
      .abolish(gold(_,_)).
-
 

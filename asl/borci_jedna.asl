@@ -2,9 +2,9 @@
 
 { include("moving.asl") }               // plans for movements in the scenario
 { include("search_unvisited.asl") }     // plans for finding gold
-{ include("search_quadrant.asl") }      // idem
+{ include("borci_search_quadrant.asl") }      // idem
 { include("fetch_gold.asl") }           // plans for fetch gold goal
-{ include("goto_depot.asl") }           // plans for go to depot goal
+{ include("borci_goto_depot.asl") }           // plans for go to depot goal
 { include("borci_allocation_protocol.asl") }  // plans for the gold allocation protocol
 
 /* functions */
@@ -29,6 +29,9 @@ search_gold_strategy(near_unvisited). // initial strategy
      !inform_gsize_to_leader(S);
      !choose_goal.
 
++pos(_,_,X)
+  <- .send(borci_nula,tell,tick(X)).
+
 +!inform_gsize_to_leader(S) : .my_name(miner1)
    <- ?depot(S,DX,DY);
       .send(borci_nula,tell,depot(S,DX,DY));
@@ -43,7 +46,12 @@ search_gold_strategy(near_unvisited). // initial strategy
      . to go to depot to drop golds,
      . search gold
 */
-
+/*
++!choose_goal : pos(X,Y,_) & block(BX,BY)
+  <- jia.direction(X,Y,BX,BY,D);
+     .print("trying to block");
+     do(D).
+*/
 // Others golds left and I have space
 // find the closest gold among the known options
 @cgod2[atomic]

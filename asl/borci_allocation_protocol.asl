@@ -2,7 +2,7 @@
 
 // someone else sent me a gold location, send a bid
 +gold(X,Y)[source(A)]
-  :  A \== self
+  :  A \== self & role(miner)
   <- !calc_bid(gold(X,Y), Bid);
      .my_name(Me);
      //.print("My bid for ",gold(X,Y)," is ",Bid);
